@@ -30,7 +30,7 @@ jobs:
     - name: Clone OpenWrt Source
       working-directory: /builder
       run: |
-        git clone --depth 1 --branch openwrt-25.12 https://github.com/immortalwrt/immortalwrt.git openwrt
+        git clone --depth 1 --branch openwrt-25.12 https://github.com/openwrt/openwrt.git openwrt
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
@@ -42,22 +42,22 @@ jobs:
         # boot: 64MB, kernel: 64MB, rootfs: 2GB, overlay: 8GB, docker: ~52GB
         cat >> target/linux/rockchip/image/armv8.mk << 'EOF'
 
-        define Device/friendlyarm_nanopi-r76s-custom
-        DEVICE_VENDOR := FriendlyElec
-        DEVICE_MODEL := NanoPi R76S (Custom 64GB)
-        DEVICE_DTS := rockchip/rk3576-nanopi-r76s
-        DEVICE_PACKAGES := kmod-usb3 kmod-mmc kmod-sdio-host kmod-brcmfmac \\
-        firmware-brcmfmac kmod-bluetooth bluez-libs bluez-tools \\
-        dockerd docker-compose kmod-br-netfilter kmod-overlay kmod-veth \\
-        kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs3 kmod-usb-storage
-        IMAGE/sysupgrade.img.gz := boot-script | boot-img | kernel-img | \\
-        rootfs-img | gzip
-        KERNEL_SIZE := 67108864
-        BOOT_IMG_SIZE := 67108864
-        ROOTFS_PARTSIZE := 2147483648
-        endef
-        TARGET_DEVICES += friendlyarm_nanopi-r76s-custom
-        EOF
+define Device/friendlyarm_nanopi-r76s-custom
+  DEVICE_VENDOR := FriendlyElec
+  DEVICE_MODEL := NanoPi R76S (Custom 64GB)
+  DEVICE_DTS := rockchip/rk3576-nanopi-r76s
+  DEVICE_PACKAGES := kmod-usb3 kmod-mmc kmod-sdio-host kmod-brcmfmac \
+    firmware-brcmfmac kmod-bluetooth bluez-libs bluez-tools \
+    dockerd docker-compose kmod-br-netfilter kmod-overlay kmod-veth \
+    kmod-fs-ext4 kmod-fs-vfat kmod-fs-ntfs3 kmod-usb-storage
+  IMAGE/sysupgrade.img.gz := boot-script | boot-img | kernel-img | \
+    rootfs-img | gzip
+  KERNEL_SIZE := 67108864
+  BOOT_IMG_SIZE := 67108864
+  ROOTFS_PARTSIZE := 2147483648
+endef
+TARGET_DEVICES += friendlyarm_nanopi-r76s-custom
+EOF
         echo "✅ 分区配置已应用"
     
     - name: Apply Full Configuration
@@ -68,7 +68,7 @@ jobs:
         CONFIG_TARGET_rockchip_armv8=y
         CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r76s=y
         CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r76s-custom=y
-        CONFIG_KERNEL_6_18=y
+        CONFIG_KERNEL_6_12=y
         CONFIG_KERNEL_CLANG=y
         CONFIG_KERNEL_LTO=y
         CONFIG_DEVEL=y
