@@ -1,50 +1,42 @@
+# 触发编译
+
 name: Build NanoPi R76S Custom
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'OpenWrt version'
-        required: false
-        default: '25.12.2'
   push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/custom-r76s.yml'
+    branches: [main]
+    paths: ['.github/workflows/custom-r76s.yml']
 
 jobs:
   build:
-    name: Build NanoPi R76S Custom
     runs-on: ubuntu-24.04
-    
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    
-    - name: Free disk space
-      uses: sbwml/actions@free-disk
-      with:
-        build-mount-path: /builder
-    
-    - name: Build System Setup
-      uses: sbwml/actions@openwrt-build-setup
-    
-    - name: Install LLVM
-      uses: sbwml/actions@install-llvm
-    
-    - name: Clone OpenWrt Source
-      working-directory: /builder
-      run: |
-        git clone --depth 1 --branch openwrt-25.12 https://github.com/sbwml/openwrt.git
-        cd openwrt
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
-    
-    - name: Apply Custom Config
-      working-directory: /builder/openwrt
-      run: |
-        cat > .config << 'EOF'
+      - uses: actions/checkout@v4
+      
+      - name: Free disk space
+        uses: sbwml/actions@free-disk
+        with:
+          build-mount-path: /builder
+      
+      - name: Build System Setup
+        uses: sbwml/actions@openwrt-build-setup
+      
+      - name: Install LLVM
+        uses: sbwml/actions@install-llvm
+      
+      - name: Clone OpenWrt
+        working-directory: /builder
+        run: |
+          git clone --depth 1 --branch openwrt-25.12 https://github.com/sbwml/openwrt.git
+          cd openwrt
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+      
+      - name: Custom Config
+        working-directory: /builder/openwrt
+        run: |
+          cat > .config << 'EOFCONFIG'
 CONFIG_TARGET_rockchip=y
 CONFIG_TARGET_rockchip_armv8=y
 CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r76s=y
@@ -125,45 +117,35 @@ CONFIG_PACKAGE_kmod-crypto-aes=y
 CONFIG_PACKAGE_kmod-crypto-sha256=y
 CONFIG_PACKAGE_kmod-crypto-sha512=y
 CONFIG_PACKAGE_nginx=y
-EOF
-        echo "配置已应用"
-    
-    - name: Compile OpenWrt
-      working-directory: /builder/openwrt
-      env:
-        KERNEL_CLANG_LTO: y
-        BUILD_FAST: y
-        ENABLE_CCACHE: y
-        ENABLE_OTA: y
-        ENABLE_BPF: y
-        ENABLE_LTO: y
-        ENABLE_LRNG: y
-        USE_GCC15: y
-        ENABLE_MOLD: y
-      run: |
-        make defconfig
-        make -j$(nproc)
-    
-    - name: Prepare Firmware
-      working-directory: /builder/openwrt
-      run: |
-        mkdir -p /builder/output
-        cp bin/targets/rockchip/armv8/*nanopi-r76s*.img.gz /builder/output/ || true
-        cp bin/targets/rockchip/armv8/*.manifest /builder/output/ 2>/dev/null || true
-    
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: OpenWrt-NanoPi-R76S-Custom
-        path: /builder/output/*
-        retention-days: 7
-    
-    - name: Create Release
-      uses: ncipollo/release-action@main
-      with:
-        name: OpenWrt-25.12.2-NanoPi-R76S-Custom
-        tag: custom-${{ github.run_number }}
-        token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: /builder/output/*.img.gz
-        allowUpdates: true
-        replacesArtifacts: true
+EOFCONFIG
+      
+      - name: Compile
+        working-directory: /builder/openwrt
+        env:
+          KERNEL_CLANG_LTO: y
+          BUILD_FAST: y
+          ENABLE_CCACHE: y
+          ENABLE_OTA: y
+          ENABLE_BPF: y
+          ENABLE_LTO: y
+          ENABLE_LRNG: y
+          USE_GCC15: y
+          ENABLE_MOLD: y
+        run: |
+          make defconfig
+          make -j$(nproc)
+      
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenWrt-R76S
+          path: /builder/openwrt/bin/targets/rockchip/armv8/*.img.gz
+      
+      - name: Release
+        uses: ncipollo/release-action@main
+        with:
+          name: OpenWrt-25.12.2-R76S
+          tag: ${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: /builder/openwrt/bin/targets/rockchip/armv8/*.img.gz
+          allowUpdates: true
