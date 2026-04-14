@@ -1,5 +1,6 @@
 name: Build NanoPi R76S Custom
 
+# 触发编译 - 2026-04-14 15:00
 on:
   workflow_dispatch:
   push:
@@ -9,7 +10,8 @@ on:
 jobs:
   build:
     name: Build NanoPi R76S OpenWrt 25.12.2
-    runs-on: ubuntu-24.04
+    runs-# 触发编译 - 2026-04-14 15:00
+on: ubuntu-24.04
     timeout-minutes: 180
     
     steps:
