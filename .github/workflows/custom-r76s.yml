@@ -7,6 +7,11 @@ on:
         description: 'OpenWrt version'
         required: false
         default: '25.12.2'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/custom-r76s.yml'
 
 jobs:
   build:
