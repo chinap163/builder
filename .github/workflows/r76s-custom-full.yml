@@ -569,21 +569,13 @@ jobs:
     - name: Compile OpenWrt
       working-directory: /builder/openwrt
       env:
-        KERNEL_CLANG_LTO: y
-        BUILD_FAST: y
-        ENABLE_CCACHE: y
-        ENABLE_OTA: y
-        ENABLE_BPF: y
-        ENABLE_LTO: y
-        ENABLE_LRNG: y
-        USE_GCC15: y
-        ENABLE_MOLD: y
+        CCACHE_DIR: /builder/ccache
       run: |
         echo "生成配置..."
         make defconfig
         echo "开始编译（约 90-120 分钟）..."
         echo "开始时间：$(date)"
-        make -j$(nproc)
+        make -j$(nproc) V=s
         echo "结束时间：$(date)"
     
     - name: Prepare Firmware
