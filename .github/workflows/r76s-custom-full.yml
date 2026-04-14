@@ -1,5 +1,6 @@
 name: Build NanoPi R76S Custom Full
 
+# Trigger build - 2026-04-14 19:30
 on:
   workflow_dispatch:
   push:
@@ -9,7 +10,8 @@ on:
 jobs:
   build:
     name: NanoPi R76S OpenWrt 25.12.2 Custom
-    runs-on: ubuntu-24.04
+    runs-# Trigger build - 2026-04-14 19:30
+on: ubuntu-24.04
     timeout-minutes: 180
     
     steps:
