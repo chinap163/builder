@@ -30,7 +30,7 @@ jobs:
     - name: Clone OpenWrt Source
       working-directory: /builder
       run: |
-        git clone --depth 1 --branch openwrt-25.12 https://github.com/immortalwrt/immortalwrt.git
+        git clone --depth 1 --branch openwrt-25.12 https://github.com/immortalwrt/immortalwrt.git openwrt
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
