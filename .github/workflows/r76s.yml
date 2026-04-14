@@ -1,0 +1,79 @@
+name: Build NanoPi R76S
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/r76s.yml']
+
+jobs:
+  build:
+    name: NanoPi R76S OpenWrt 25.12.2
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+    
+    - name: Free disk space
+      uses: sbwml/actions@free-disk
+      with:
+        build-mount-path: /builder
+    
+    - name: Build System Setup
+      uses: sbwml/actions@openwrt-build-setup
+    
+    - name: Install LLVM
+      uses: sbwml/actions@install-llvm
+    
+    - name: Clone OpenWrt
+      working-directory: /builder
+      run: |
+        git clone --depth 1 --branch openwrt-25.12 https://github.com/sbwml/openwrt.git
+        cd openwrt
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+    
+    - name: Download sbwml config
+      working-directory: /builder/openwrt
+      run: |
+        # 使用 sbwml 的预设配置
+        wget -O .config https://raw.githubusercontent.com/sbwml/openwrt/main/.config.nanopi-r5s
+        
+        # 启用额外软件包
+        echo "CONFIG_PACKAGE_dockerd=y" >> .config
+        echo "CONFIG_PACKAGE_docker-compose=y" >> .config
+        echo "CONFIG_PACKAGE_luci-app-adguardhome=y" >> .config
+        echo "CONFIG_PACKAGE_luci-app-airconnect=y" >> .config
+        echo "CONFIG_PACKAGE_luci-app-airplay2=y" >> .config
+        echo "CONFIG_PACKAGE_luci-app-netspeedtest=y" >> .config
+        
+        make defconfig
+    
+    - name: Compile
+      working-directory: /builder/openwrt
+      env:
+        KERNEL_CLANG_LTO: y
+        BUILD_FAST: y
+        ENABLE_CCACHE: y
+        ENABLE_OTA: y
+      run: |
+        make -j$(nproc)
+    
+    - name: Upload Firmware
+      uses: actions/upload-artifact@v5
+      with:
+        name: OpenWrt-NanoPi-R76S
+        path: /builder/openwrt/bin/targets/rockchip/armv8/*nanopi-r76s*.img.gz
+        retention-days: 7
+    
+    - name: Create Release
+      if: success()
+      uses: ncipollo/release-action@main
+      with:
+        name: OpenWrt-25.12.2-NanoPi-R76S
+        tag: ${{ github.run_number }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: /builder/openwrt/bin/targets/rockchip/armv8/*.img.gz
+        allowUpdates: true
