@@ -11,24 +11,24 @@ jobs:
     name: Build NanoPi R76S OpenWrt 25.12.2
     runs-on: ubuntu-24.04
     timeout-minutes: 180
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    
+
     - name: Free disk space
       uses: sbwml/actions@free-disk
       with:
         build-mount-path: /builder
-    
+
     - name: Build System Setup
       uses: sbwml/actions@openwrt-build-setup
       continue-on-error: true
-    
+
     - name: Install LLVM
       uses: sbwml/actions@install-llvm
       continue-on-error: true
-    
+
     - name: Clone OpenWrt Source
       working-directory: /builder
       run: |
@@ -37,93 +37,93 @@ jobs:
         cd openwrt
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-    
+
     - name: Apply Custom Configuration
       working-directory: /builder/openwrt
       run: |
         cat > .config << 'EOFCONFIG'
-CONFIG_TARGET_rockchip=y
-CONFIG_TARGET_rockchip_armv8=y
-CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r76s=y
-CONFIG_KERNEL_6_18=y
-CONFIG_KERNEL_CLANG=y
-CONFIG_KERNEL_LTO=y
-CONFIG_DEVEL=y
-CONFIG_CCACHE=y
-CONFIG_TARGET_ROOTFS_SQUASHFS=y
-CONFIG_PACKAGE_dockerd=y
-CONFIG_PACKAGE_docker-compose=y
-CONFIG_PACKAGE_luci-app-passwall=y
-CONFIG_PACKAGE_passwall=y
-CONFIG_PACKAGE_luci-app-homeproxy=y
-CONFIG_PACKAGE_homeproxy=y
-CONFIG_PACKAGE_luci-app-mosdns=y
-CONFIG_PACKAGE_mosdns=y
-CONFIG_PACKAGE_luci-app-smartdns=y
-CONFIG_PACKAGE_smartdns=y
-CONFIG_PACKAGE_luci-app-adguardhome=y
-CONFIG_PACKAGE_adguardhome=y
-CONFIG_PACKAGE_luci-app-aria2=y
-CONFIG_PACKAGE_aria2=y
-CONFIG_PACKAGE_luci-app-frpc=y
-CONFIG_PACKAGE_frpc=y
-CONFIG_PACKAGE_luci-app-watchcat=y
-CONFIG_PACKAGE_watchcat=y
-CONFIG_PACKAGE_luci-app-vlmcsd=y
-CONFIG_PACKAGE_vlmcsd=y
-CONFIG_PACKAGE_luci-app-socat=y
-CONFIG_PACKAGE_socat=y
-CONFIG_PACKAGE_luci-app-upnp=y
-CONFIG_PACKAGE_miniupnpd=y
-CONFIG_PACKAGE_luci-app-nlbwmon=y
-CONFIG_PACKAGE_nlbwmon=y
-CONFIG_PACKAGE_luci-app-sqm=y
-CONFIG_PACKAGE_sqm-scripts=y
-CONFIG_PACKAGE_luci-app-wol=y
-CONFIG_PACKAGE_etherwake=y
-CONFIG_PACKAGE_luci-app-airconnect=y
-CONFIG_PACKAGE_airconnect=y
-CONFIG_PACKAGE_luci-app-airplay2=y
-CONFIG_PACKAGE_shairport-sync=y
-CONFIG_PACKAGE_luci-app-appfilter=y
-CONFIG_PACKAGE_appfilter=y
-CONFIG_PACKAGE_luci-app-netspeedtest=y
-CONFIG_PACKAGE_speedtest-cli=y
-CONFIG_PACKAGE_luci-theme-argon=y
-CONFIG_PACKAGE_luci-app-argon-config=y
-CONFIG_PACKAGE_htop=y
-CONFIG_PACKAGE_btop=y
-CONFIG_PACKAGE_tmux=y
-CONFIG_PACKAGE_vim=y
-CONFIG_PACKAGE_curl=y
-CONFIG_PACKAGE_wget=y
-CONFIG_PACKAGE_git=y
-CONFIG_PACKAGE_bash=y
-CONFIG_PACKAGE_kmod-fs-ext4=y
-CONFIG_PACKAGE_kmod-fs-vfat=y
-CONFIG_PACKAGE_kmod-fs-ntfs3=y
-CONFIG_PACKAGE_kmod-usb-storage=y
-CONFIG_PACKAGE_kmod-usb3=y
-CONFIG_PACKAGE_kmod-tcp-bbr=y
-CONFIG_PACKAGE_kmod-ipt-nat=y
-CONFIG_PACKAGE_kmod-ipt-offload=y
-CONFIG_PACKAGE_kmod-br-netfilter=y
-CONFIG_PACKAGE_kmod-overlay=y
-CONFIG_PACKAGE_kmod-veth=y
-CONFIG_PACKAGE_kmod-bluetooth=y
-CONFIG_PACKAGE_bluez-libs=y
-CONFIG_PACKAGE_bluez-tools=y
-CONFIG_PACKAGE_firmware-brcmfmac=y
-CONFIG_PACKAGE_kmod-brcmfmac=y
-CONFIG_PACKAGE_kmod-mmc=y
-CONFIG_PACKAGE_kmod-sdio-host=y
-CONFIG_PACKAGE_kmod-crypto-acompress=y
-CONFIG_PACKAGE_kmod-crypto-aes=y
-CONFIG_PACKAGE_kmod-crypto-sha256=y
-CONFIG_PACKAGE_kmod-crypto-sha512=y
-CONFIG_PACKAGE_nginx=y
-EOFCONFIG
-    
+        CONFIG_TARGET_rockchip=y
+        CONFIG_TARGET_rockchip_armv8=y
+        CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r76s=y
+        CONFIG_KERNEL_6_18=y
+        CONFIG_KERNEL_CLANG=y
+        CONFIG_KERNEL_LTO=y
+        CONFIG_DEVEL=y
+        CONFIG_CCACHE=y
+        CONFIG_TARGET_ROOTFS_SQUASHFS=y
+        CONFIG_PACKAGE_dockerd=y
+        CONFIG_PACKAGE_docker-compose=y
+        CONFIG_PACKAGE_luci-app-passwall=y
+        CONFIG_PACKAGE_passwall=y
+        CONFIG_PACKAGE_luci-app-homeproxy=y
+        CONFIG_PACKAGE_homeproxy=y
+        CONFIG_PACKAGE_luci-app-mosdns=y
+        CONFIG_PACKAGE_mosdns=y
+        CONFIG_PACKAGE_luci-app-smartdns=y
+        CONFIG_PACKAGE_smartdns=y
+        CONFIG_PACKAGE_luci-app-adguardhome=y
+        CONFIG_PACKAGE_adguardhome=y
+        CONFIG_PACKAGE_luci-app-aria2=y
+        CONFIG_PACKAGE_aria2=y
+        CONFIG_PACKAGE_luci-app-frpc=y
+        CONFIG_PACKAGE_frpc=y
+        CONFIG_PACKAGE_luci-app-watchcat=y
+        CONFIG_PACKAGE_watchcat=y
+        CONFIG_PACKAGE_luci-app-vlmcsd=y
+        CONFIG_PACKAGE_vlmcsd=y
+        CONFIG_PACKAGE_luci-app-socat=y
+        CONFIG_PACKAGE_socat=y
+        CONFIG_PACKAGE_luci-app-upnp=y
+        CONFIG_PACKAGE_miniupnpd=y
+        CONFIG_PACKAGE_luci-app-nlbwmon=y
+        CONFIG_PACKAGE_nlbwmon=y
+        CONFIG_PACKAGE_luci-app-sqm=y
+        CONFIG_PACKAGE_sqm-scripts=y
+        CONFIG_PACKAGE_luci-app-wol=y
+        CONFIG_PACKAGE_etherwake=y
+        CONFIG_PACKAGE_luci-app-airconnect=y
+        CONFIG_PACKAGE_airconnect=y
+        CONFIG_PACKAGE_luci-app-airplay2=y
+        CONFIG_PACKAGE_shairport-sync=y
+        CONFIG_PACKAGE_luci-app-appfilter=y
+        CONFIG_PACKAGE_appfilter=y
+        CONFIG_PACKAGE_luci-app-netspeedtest=y
+        CONFIG_PACKAGE_speedtest-cli=y
+        CONFIG_PACKAGE_luci-theme-argon=y
+        CONFIG_PACKAGE_luci-app-argon-config=y
+        CONFIG_PACKAGE_htop=y
+        CONFIG_PACKAGE_btop=y
+        CONFIG_PACKAGE_tmux=y
+        CONFIG_PACKAGE_vim=y
+        CONFIG_PACKAGE_curl=y
+        CONFIG_PACKAGE_wget=y
+        CONFIG_PACKAGE_git=y
+        CONFIG_PACKAGE_bash=y
+        CONFIG_PACKAGE_kmod-fs-ext4=y
+        CONFIG_PACKAGE_kmod-fs-vfat=y
+        CONFIG_PACKAGE_kmod-fs-ntfs3=y
+        CONFIG_PACKAGE_kmod-usb-storage=y
+        CONFIG_PACKAGE_kmod-usb3=y
+        CONFIG_PACKAGE_kmod-tcp-bbr=y
+        CONFIG_PACKAGE_kmod-ipt-nat=y
+        CONFIG_PACKAGE_kmod-ipt-offload=y
+        CONFIG_PACKAGE_kmod-br-netfilter=y
+        CONFIG_PACKAGE_kmod-overlay=y
+        CONFIG_PACKAGE_kmod-veth=y
+        CONFIG_PACKAGE_kmod-bluetooth=y
+        CONFIG_PACKAGE_bluez-libs=y
+        CONFIG_PACKAGE_bluez-tools=y
+        CONFIG_PACKAGE_firmware-brcmfmac=y
+        CONFIG_PACKAGE_kmod-brcmfmac=y
+        CONFIG_PACKAGE_kmod-mmc=y
+        CONFIG_PACKAGE_kmod-sdio-host=y
+        CONFIG_PACKAGE_kmod-crypto-acompress=y
+        CONFIG_PACKAGE_kmod-crypto-aes=y
+        CONFIG_PACKAGE_kmod-crypto-sha256=y
+        CONFIG_PACKAGE_kmod-crypto-sha512=y
+        CONFIG_PACKAGE_nginx=y
+        EOFCONFIG
+
     - name: Compile OpenWrt
       working-directory: /builder/openwrt
       env:
@@ -139,7 +139,7 @@ EOFCONFIG
       run: |
         make defconfig
         make -j$(nproc)
-    
+
     - name: Prepare Firmware
       if: always()
       working-directory: /builder/openwrt
@@ -147,7 +147,7 @@ EOFCONFIG
         mkdir -p /builder/output
         cp bin/targets/rockchip/armv8/*nanopi-r76s*.img.gz /builder/output/ 2>/dev/null || true
         ls -lh /builder/output/
-    
+
     - name: Upload Artifact
       if: always()
       uses: actions/upload-artifact@v4
@@ -155,7 +155,7 @@ EOFCONFIG
         name: OpenWrt-NanoPi-R76S-Custom
         path: /builder/output/*.img.gz
         retention-days: 7
-    
+
     - name: Create Release
       if: success()
       uses: ncipollo/release-action@main
