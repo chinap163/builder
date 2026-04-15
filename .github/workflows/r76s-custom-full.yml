@@ -36,15 +36,14 @@ jobs:
         
         # 添加第三方源
         echo "添加 ImmortalWrt 源..."
-        git clone --depth 1 https://github.com/immortalwrt/immortalwrt.git tmp/immortalwrt
-        cd tmp/immortalwrt
-        git submodule update --init --recursive --depth 1 feeds/luci feeds/packages
-        cd /builder/openwrt
+        # ImmortalWrt 的 feeds 是独立仓库，直接克隆
+        git clone --depth 1 https://github.com/immortalwrt/luci.git tmp/luci
+        git clone --depth 1 https://github.com/immortalwrt/packages.git tmp/packages
         
-        # 复制 ImmortalWrt 的 feeds
-        cp -rf tmp/immortalwrt/feeds/luci feeds/luci-immortalwrt
-        cp -rf tmp/immortalwrt/feeds/packages feeds/packages-immortalwrt
-        rm -rf tmp/immortalwrt
+        # 复制到 OpenWrt feeds 目录
+        cp -rf tmp/luci feeds/luci-immortalwrt
+        cp -rf tmp/packages feeds/packages-immortalwrt
+        rm -rf tmp/luci tmp/packages
         
         # 添加 Lean 的源（PassWall 等）
         echo "添加 Lean 源..."
