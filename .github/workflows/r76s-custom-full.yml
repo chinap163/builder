@@ -34,23 +34,15 @@ jobs:
         git clone --depth 1 --branch openwrt-25.12 https://github.com/openwrt/openwrt.git openwrt
         cd openwrt
         
-        # 添加第三方源
+        # 添加第三方源到 feeds.conf
         echo "添加 ImmortalWrt 源..."
-        # ImmortalWrt 的 feeds 是独立仓库，直接克隆
-        git clone --depth 1 https://github.com/immortalwrt/luci.git tmp/luci
-        git clone --depth 1 https://github.com/immortalwrt/packages.git tmp/packages
-        
-        # 复制到 OpenWrt feeds 目录
-        cp -rf tmp/luci feeds/luci-immortalwrt
-        cp -rf tmp/packages feeds/packages-immortalwrt
-        rm -rf tmp/luci tmp/packages
+        echo "src-git immortalwrt_packages https://github.com/immortalwrt/packages.git;openwrt-24.10" >> feeds.conf.default
+        echo "src-git immortalwrt_luci https://github.com/immortalwrt/luci.git;openwrt-24.10" >> feeds.conf.default
         
         # 添加 Lean 的源（PassWall 等）
         echo "添加 Lean 源..."
-        git clone --depth 1 https://github.com/coolsnowwolf/lede.git tmp/lede
-        cp -rf tmp/lede/feeds/luci-app-* feeds/
-        cp -rf tmp/lede/package/lean feeds/packages-immortalwrt/lean 2>/dev/null || true
-        rm -rf tmp/lede
+        echo "src-git lean_packages https://github.com/coolsnowwolf/packages" >> feeds.conf.default
+        echo "src-git lean_luci https://github.com/coolsnowwolf/luci.git;openwrt-23.05" >> feeds.conf.default
         
         # 更新 feeds
         echo "更新 feeds..."
