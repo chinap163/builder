@@ -30,26 +30,22 @@ jobs:
     - name: Clone OpenWrt Source
       working-directory: /builder
       run: |
-        # 克隆官方 OpenWrt 25.12
-        git clone --depth 1 --branch openwrt-25.12 https://github.com/openwrt/openwrt.git openwrt
+        # 克隆 ImmortalWrt 24.10.5（基于 OpenWrt 24.10，Linux 6.12 内核）
+        # ImmortalWrt 原生支持 NanoPi R76S，内置 PassWall/HomeProxy/MosDNS 等插件
+        echo "克隆 ImmortalWrt 24.10.5..."
+        git clone --depth 1 --branch openwrt-24.10 https://github.com/immortalwrt/immortalwrt.git openwrt
         cd openwrt
         
-        # 添加第三方源到 feeds.conf
-        echo "添加 ImmortalWrt 源..."
-        echo "src-git immortalwrt_packages https://github.com/immortalwrt/packages.git;openwrt-24.10" >> feeds.conf.default
-        echo "src-git immortalwrt_luci https://github.com/immortalwrt/luci.git;openwrt-24.10" >> feeds.conf.default
-        
-        # 添加 Lean 的源（PassWall 等）
-        echo "添加 Lean 源..."
-        echo "src-git lean_packages https://github.com/coolsnowwolf/packages" >> feeds.conf.default
-        echo "src-git lean_luci https://github.com/coolsnowwolf/luci.git;openwrt-23.05" >> feeds.conf.default
+        # 添加额外插件源（sbwml 的 packages）
+        echo "添加 sbwml 扩展源..."
+        echo "src-git sbwml https://github.com/sbwml/packages" >> feeds.conf.default
         
         # 更新 feeds
         echo "更新 feeds..."
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         
-        echo "✅ 第三方源已添加"
+        echo "✅ 源码准备完成"
     
     - name: Apply Custom Partition Config
       working-directory: /builder/openwrt
@@ -99,8 +95,8 @@ jobs:
         CONFIG_PACKAGE_kmod-veth=y
 
         # DNS Services
-        # CONFIG_PACKAGE_luci-app-mosdns is not set (mosdns/v2dat not available in OpenWrt 25.12)
-        # CONFIG_PACKAGE_mosdns is not set
+        CONFIG_PACKAGE_luci-app-mosdns=y
+        CONFIG_PACKAGE_mosdns=y
         CONFIG_PACKAGE_luci-app-smartdns=y
         CONFIG_PACKAGE_smartdns=y
         CONFIG_PACKAGE_luci-app-adguardhome=y
@@ -125,8 +121,8 @@ jobs:
         CONFIG_PACKAGE_watchcat=y
         CONFIG_PACKAGE_luci-app-vlmcsd=y
         CONFIG_PACKAGE_vlmcsd=y
-        # CONFIG_PACKAGE_luci-app-socat is not set (incompatible version format)
-        # CONFIG_PACKAGE_socat is not set
+        CONFIG_PACKAGE_luci-app-socat=y
+        CONFIG_PACKAGE_socat=y
         CONFIG_PACKAGE_luci-app-upnp=y
         CONFIG_PACKAGE_miniupnpd=y
         CONFIG_PACKAGE_luci-app-nlbwmon=y
@@ -614,14 +610,14 @@ jobs:
       if: success()
       uses: ncipollo/release-action@main
       with:
-        name: OpenWrt-25.12.2-NanoPi-R76S-Custom-Full
+        name: ImmortalWrt-24.10.5-NanoPi-R76S-Custom-Full
         tag: custom-full-${{ github.run_number }}
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: /builder/output/*.img.gz
         allowUpdates: true
         replacesArtifacts: true
         body: |
-          ## NanoPi R76S OpenWrt 25.12.2 完全定制固件
+          ## NanoPi R76S ImmortalWrt 24.10.5 完全定制固件
           
           ### ✅ 已预配置（开箱即用）
           - **PPPoE 账号**：15040036024@net / 12345678
@@ -634,7 +630,7 @@ jobs:
           | 类别 | 软件包 |
           |------|--------|
           | **代理** | PassWall, HomeProxy |
-          | **DNS** | MosDNS (5335), SmartDNS (5153), AdGuard Home |
+          | **DNS** | MosDNS, SmartDNS (5153), AdGuard Home |
           | **下载** | Aria2, qBittorrent |
           | **网络** | FRP, Watchcat, Socat, UPnP, 应用过滤 |
           | **监控** | 宽带监控，网速测试 |
@@ -661,3 +657,8 @@ jobs:
           - PassWall 节点需手动添加
           - 恢复出厂设置后配置保留
           - Docker 数据存储在 /opt/docker（52GB）
+          
+          ### 🎯 固件信息
+          - **基础系统**：ImmortalWrt 24.10.5
+          - **内核版本**：Linux 6.12
+          - **设备支持**：NanoPi R76S (RK3576)
