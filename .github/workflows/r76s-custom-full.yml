@@ -186,6 +186,9 @@ jobs:
         # Web
         CONFIG_PACKAGE_nginx=y
         CONFIG_PACKAGE_nginx-ssl=y
+
+        # Exclude incompatible packages
+        # CONFIG_PACKAGE_luci-app-socat is not set
         EOFCONFIG
         echo "✅ 完整配置已应用"
     
